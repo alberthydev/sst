@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UserWindow</class>
+ <widget class="QDialog" name="UserWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>982</width>
+    <height>637</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #3465f0;</string>
+  </property>
+  <widget class="QFrame" name="frameChamado">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>921</width>
+     <height>601</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>400</width>
+     <height>400</height>
+    </size>
+   </property>
+   <property name="sizeIncrement">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #ffffff;
+border-radius: 15px;
+border: 1px solid #cccccc;
+box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25);
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>0</y>
+      <width>281</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arimo</family>
+      <pointsize>15</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+    </property>
+    <property name="text">
+     <string>ABERTURA DE CHAMADOS</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>110</y>
+      <width>151</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+    </property>
+    <property name="text">
+     <string>CLIENTE SOLICITANTE</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>190</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+    </property>
+    <property name="text">
+     <string>PROBLEMA</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>190</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+    </property>
+    <property name="text">
+     <string>PRIORIDADE</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>110</y>
+      <width>351</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #ffffff;
+    color: #222222;
+}
+</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBoxPrioridade">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>220</y>
+      <width>141</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #ffffff;
+border-radius: 15px;
+border: 1px solid #cccccc;
+box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25);
+</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QRadioButton" name="radioButtonBaixo">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>102</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;
+font-weight: bold;
+
+</string>
+     </property>
+     <property name="text">
+      <string>Baixo</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonMedio">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>102</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;
+font-weight: bold;</string>
+     </property>
+     <property name="text">
+      <string>Medio</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonUrgente">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>102</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+     </property>
+     <property name="text">
+      <string>Urgente</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonAlta">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>102</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;
+font-weight: bold;</string>
+     </property>
+     <property name="text">
+      <string>Alta</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QScrollArea" name="scrollAreaProblema">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>220</y>
+      <width>211</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #ffffff;
+border-radius: 15px;
+border: 1px solid #cccccc;
+box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25);
+</string>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>209</width>
+       <height>149</height>
+      </rect>
+     </property>
+     <widget class="QCheckBox" name="checkBoxSistema">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>191</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Sistema</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxImpressora">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>191</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Impressora</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxHardware">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>191</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Hardware</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxRede">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>191</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Rede</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxOutro">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>191</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #333333;
+font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Outro</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>480</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+  background-color: #1976D2;
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+}
+QPushButton:hover {
+  background-color: #1565C0;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>ENVIAR</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditOutro">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>380</y>
+      <width>211</width>
+      <height>51</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

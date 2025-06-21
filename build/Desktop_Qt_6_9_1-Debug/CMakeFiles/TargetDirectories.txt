@@ -1,0 +1,9 @@
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/login.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/edit_cache.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/rebuild_cache.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/list_install_components.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/install.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/install/local.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/install/strip.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/login_autogen_timestamp_deps.dir
+/home/cristiano-pirolli/login/build/Desktop_Qt_6_9_1-Debug/CMakeFiles/login_autogen.dir
