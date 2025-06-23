@@ -88,12 +88,6 @@ cmake --build .
 ./sst
 ```
 
-6. Ou no Windows:
-
-```powershell
-sst.exe
-```
-
 ## Banco de Dados
 
 O projeto utiliza um banco SQLite chamado sst_db.db, que armazena informações de usuários, técnicos e chamados.
