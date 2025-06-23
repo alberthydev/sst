@@ -3,9 +3,10 @@
 #include "ui_technician.h"
 #include "session_manager.h"
 #include <QMessageBox>
+#include <QTextBrowser>
 
 technician::technician(QWidget *parent)
-    : QDialog(parent)
+    : QWidget(parent)
     , ui(new Ui::technician)
 {
     ui->setupUi(this);
@@ -91,6 +92,10 @@ technician::technician(QWidget *parent)
 
     // User Type ComboBox
     ui->typeComboBox->addItems({"Tecnico", "Solicitante"});
+
+    // Chat
+    ui->chatListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->chatListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 technician::~technician()
@@ -218,8 +223,6 @@ void technician::showCallDetails(const CallInfo &info){
     }
 
     m_facade->requestChatMessages(m_currentCallId);
-
-    ui->mainInfo->setCurrentIndex(4);
 }
 
 void technician::onOperationFailed(const QString &errorMessage)
@@ -330,7 +333,7 @@ void technician::onCallUpdateSuccess(const QString &message)
     // Mostra uma mensagem de sucesso para o usuário
     QMessageBox::information(this, "Sucesso", message);
 
-    // Pede os detalhes do chamado novamente para mostrar o novo responsável
+    // Pede os detalhes do chamado 'novamente para mostrar o novo responsável
     m_facade->getCallDetails(m_currentCallId);
 
     // Atualiza os contadores do dashboard
@@ -339,29 +342,79 @@ void technician::onCallUpdateSuccess(const QString &message)
 
 void technician::displayChatMessages(const QList<ChatMessageInfo> &messages)
 {
-    // **Substitua 'chatListWidget' pelo nome real da sua QListWidget**
-    ui->chatList->clear(); // Limpa a lista antes de adicionar as novas mensagens
+    qDebug() << "Recebendo" << messages.size() << "mensagens para exibir no chat.";
+    ui->chatListWidget->setUpdatesEnabled(false);
+    ui->chatListWidget->clear();
+
+    // PASSO 1: TORNE A PÁGINA DO CHAT VISÍVEL PRIMEIRO.
+    ui->mainInfo->setCurrentIndex(4);
+
+    // PASSO 2: FORCE O QT A PROCESSAR TODAS AS MUDANÇAS PENDENTES.
+    // Esta é a linha "mágica" que resolve problemas de timing de UI.
+    // Ela garante que a página foi desenhada e seus widgets têm tamanho real.
+    QCoreApplication::processEvents();
+
+    // PASSO 3: AGORA, COM A TELA JÁ VISÍVEL, PODEMOS POPULAR A LISTA COM SEGURANÇA.
+    // O seu código para preencher a lista já está correto.
+    ui->chatListWidget->setUpdatesEnabled(false);
+    ui->chatListWidget->clear();
 
     for (const ChatMessageInfo &msg : messages) {
-        QString formattedMessage = QString("[%1] - %2 - [%3]")
-        .arg(msg.senderName)
-            .arg(msg.message)
-            .arg(msg.timestamp.toString("dd/MM/yy hh:mm"));
+        // --- LÓGICA FINAL COM ALINHAMENTO DE BALÃO ---
 
-        QListWidgetItem *item = new QListWidgetItem(formattedMessage);
+        // 1. Determina se a mensagem é do usuário logado
+        bool isCurrentUser = (msg.senderName == SessionManager::getInstance().getCurrentUserName());
 
-        // Opcional: Alinhar a mensagem do usuário logado à direita para um visual de chat
-        if (msg.senderName == SessionManager::getInstance().getCurrentUserName()) {
-            item->setTextAlignment(Qt::AlignRight);
+        // 2. Cria o nosso "balão de chat" (o QTextBrowser)
+        QTextBrowser *messageBrowser = new QTextBrowser();
+        messageBrowser->setFrameStyle(QFrame::NoFrame);
+        messageBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        messageBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+        // Formatamos o conteúdo com HTML
+        QString html = QString("<b>%1</b><br>%2<br><span style='font-size: 8pt; color: #888;'>%3</span>")
+                           .arg(msg.senderName)
+                           .arg(msg.message.toHtmlEscaped()) // .toHtmlEscaped() para segurança
+                           .arg(msg.timestamp.toString("dd/MM/yy hh:mm"));
+        messageBrowser->setHtml(html);
+
+        // Estilizamos o balão com cores de fundo diferentes
+        QString bubbleStyle = isCurrentUser
+                                  ? "background-color: #dcf8c6; border-radius: 10px; padding: 8px;" // Verde claro (enviado)
+                                  : "background-color: #ffffff; border-radius: 10px; padding: 8px;";  // Branco (recebido)
+        messageBrowser->setStyleSheet(bubbleStyle);
+
+        // 3. Cria o widget container e o layout horizontal
+        QWidget *containerWidget = new QWidget();
+        containerWidget->setStyleSheet("border:none;");
+        QHBoxLayout *layout = new QHBoxLayout(containerWidget);
+        layout->setContentsMargins(5, 5, 5, 5); // Margem para a linha inteira
+
+        // 4. A MÁGICA DO ALINHAMENTO
+        if (isCurrentUser) {
+            layout->addStretch(); // Mola elástica à ESQUERDA, empurrando o balão para a direita
+            layout->addWidget(messageBrowser);
         } else {
-            item->setTextAlignment(Qt::AlignLeft);
+            layout->addWidget(messageBrowser);
+            layout->addStretch(); // Mola elástica à DIREITA, empurrando o balão para a esquerda
         }
 
-        ui->chatList->addItem(item);
+        // 5. Crie e adicione o item da lista
+        QListWidgetItem *item = new QListWidgetItem();
+        ui->chatListWidget->addItem(item);
+
+        // 6. Coloque o CONTAINER (e não o browser diretamente) dentro do item
+        ui->chatListWidget->setItemWidget(item, containerWidget);
+
+        // 7. Cálculo final da altura
+        // Limitamos a largura do balão a 75% da tela para um visual melhor
+        messageBrowser->document()->setTextWidth(ui->chatListWidget->viewport()->width() * 0.75);
+        QSize size = messageBrowser->document()->size().toSize();
+        item->setSizeHint(QSize(size.width(), size.height() + 50)); // +10 de padding
     }
 
-    // Rola automaticamente para a última mensagem
-    ui->chatList->scrollToBottom();
+    ui->chatListWidget->setUpdatesEnabled(true);
+    ui->chatListWidget->scrollToBottom();
 }
 
 void technician::on_addComentBtn_clicked()

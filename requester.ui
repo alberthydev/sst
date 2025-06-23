@@ -18,7 +18,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Solicitante - SST</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,5">
    <property name="spacing">
@@ -748,6 +748,9 @@ border: 1px solid #3383ff;</string>
 padding: 10px;
 border-radius: 5px;
 border: 1px solid #3383ff;</string>
+                </property>
+                <property name="placeholderText">
+                 <string>Digite sua mensagem aqui...</string>
                 </property>
                </widget>
               </item>

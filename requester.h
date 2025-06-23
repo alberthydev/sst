@@ -1,7 +1,7 @@
 #ifndef REQUESTER_H
 #define REQUESTER_H
 
-#include <QDialog>
+#include <QWidget>
 #include <QList>
 #include <QTableWidgetItem>
 #include "facade_call_system.h"
@@ -11,7 +11,7 @@ namespace Ui {
 class requester;
 }
 
-class requester : public QDialog
+class requester : public QWidget
 {
     Q_OBJECT
 

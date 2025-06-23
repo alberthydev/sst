@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Tecnico - SST</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -419,6 +419,11 @@ padding: 100px 20px;</string>
             </item>
             <item>
              <widget class="HoverWidget" name="okCallsBtn">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">background: grey;
 border-radius: 5px;</string>
@@ -482,6 +487,11 @@ border-radius: 5px;</string>
             </item>
             <item>
              <widget class="HoverWidget" name="backUserBtn">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">background: grey;
 border-radius: 5px;</string>
@@ -682,6 +692,11 @@ padding-left: 10px;</string>
             </item>
             <item>
              <widget class="HoverWidget" name="backUserEditBtn">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">background: grey;
 border-radius: 5px;</string>
@@ -1004,6 +1019,11 @@ border-radius: 5px;</string>
             </item>
             <item>
              <widget class="HoverWidget" name="backBtn">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">background: grey;
 border-radius: 5px;
@@ -1050,6 +1070,11 @@ padding: 5px 15px;</string>
             </item>
             <item>
              <widget class="HoverWidget" name="editResponBtn">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">background: grey;
 border-radius: 5px;
@@ -1134,7 +1159,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                </widget>
               </item>
               <item>
-               <widget class="QListWidget" name="chatList">
+               <widget class="QListWidget" name="chatListWidget">
                 <property name="font">
                  <font>
                   <family>Carlito</family>
@@ -1167,10 +1192,18 @@ padding: 20px 10px;
 border-radius: 5px;
 border: 1px solid #3383ff;</string>
                 </property>
+                <property name="placeholderText">
+                 <string>Digite sua mensagem aqui...</string>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="HoverWidget" name="addComentBtn">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">background: grey;
 border-radius: 5px;</string>

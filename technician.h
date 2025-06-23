@@ -1,7 +1,7 @@
 #ifndef TECHNICIAN_H
 #define TECHNICIAN_H
 
-#include <QDialog>
+#include <QWidget>
 #include "facade_call_system.h"
 #include "call_info.h"
 #include "qtablewidget.h"
@@ -13,7 +13,7 @@ namespace Ui {
 class technician;
 }
 
-class technician : public QDialog
+class technician : public QWidget
 {
     Q_OBJECT
 
