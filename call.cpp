@@ -15,6 +15,20 @@ void Call::startState() {
     }
 }
 
+void Call::assignTechnician(int techId) {
+    if(m_currentState) {
+        m_currentState->assignTechnician(this, techId);
+    }
+}
+
+void Call::close()
+{
+    // Apenas repassa a chamada para o objeto de estado atual
+    if (m_currentState) {
+        m_currentState->close(this);
+    }
+}
+
 void Call::transitionTo(std::unique_ptr<CallState> newState) {
     qDebug() << "Transicionando do estado" << m_currentState->getName()
     << "para" << newState->getName();

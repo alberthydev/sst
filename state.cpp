@@ -33,7 +33,7 @@ void OngoingState::assignTechnician(Call* call, int techId){
 void OngoingState::close(Call* call) {
     qDebug() << "Lógica do EstadoEmAndamento: Fechando o chamado.";
     call->setStatus("Fechado");
-    // Aqui você também poderia setar a data_fechamento
+    call->setClosingDate(QDateTime::currentDateTime());
     call->transitionTo(std::make_unique<CloseState>());
 }
 

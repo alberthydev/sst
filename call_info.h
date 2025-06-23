@@ -10,6 +10,7 @@ struct CallInfo {
     QString descricao;
     QString status;
     QDateTime data_abertura;
+    QDateTime data_fechamento;
     QString tipo;
     QString prioridade;
     QString nome_solicitante;

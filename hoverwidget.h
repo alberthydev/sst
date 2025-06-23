@@ -19,6 +19,7 @@ public:
     void setBgColor(const QColor &color);
     void setColors(const QColor &normal, const QColor &hover);
     void setTextColor(const QColor &color);
+    void setConfigs(QString text,const QColor &color, const QColor &normal, const QColor &hover, QString config);
 
 protected:
     void enterEvent(QEnterEvent *) override;

@@ -4,6 +4,7 @@
 #include <memory>
 #include <QString>
 #include "call_state.h"
+#include <QDateTime>
 
 class Call {
 public:
@@ -12,12 +13,13 @@ public:
     void startState();
 
     // Delega as ações para o objeto de estado atual
-    void assignTechnician(int techId) {
-        if(m_currentState) m_currentState->assignTechnician(this, techId);
-    }
+    void assignTechnician(int techId);
 
     // Método para os estados poderem mudar o estado do Chamado
     void transitionTo(std::unique_ptr<CallState> newState);
+    void close();
+    void setClosingDate(const QDateTime &date) { m_closing_date = date; }
+    QDateTime closingDate() const { return m_closing_date; }
 
     // Getters e Setters para as propriedades do chamado
     int id() const { return m_id; }
@@ -38,7 +40,7 @@ private:
     int m_id = 0;
     QString m_status;
     int m_tech_id = 0;
-    // ... etc ...
+    QDateTime m_closing_date;
 };
 
 

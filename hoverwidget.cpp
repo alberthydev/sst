@@ -75,3 +75,68 @@ void HoverWidget::setTextColor(const QColor &color) {
     m_textColor = color;
     update();
 }
+
+void HoverWidget::setConfigs(QString text,const QColor &color, const QColor &normal, const QColor &hover, QString config)
+{
+    this->setColors(normal, hover);
+    this->setText(text);
+    this->setTextColor(color);
+
+    if(config=="calls"){
+        this->setStyleSheet
+            (R"(
+            font-size: 30pt;
+            font-weight: bold;
+            min-width: 200px;
+            min-height: 150px;
+            max-width: 500px;
+            max-height: 325px;
+        )");
+    }
+    if(config=="admin"){
+        this->setStyleSheet
+            (R"(
+            font-size: 20pt;
+            font-weight: bold;
+            min-width: 100px;
+            min-height: 50px;
+            max-width: 500px;
+            max-height: 100px;
+        )");
+    }
+    if(config=="defaultBtn"){
+        this->setStyleSheet
+            (R"(
+            font-size: 20pt;
+            font-weight: bold;
+            min-width: 50px;
+            min-height: 25px;
+            max-width: 500px;
+            max-height: 250px;
+        )");
+    }
+    if(config=="loginBtn"){
+        this->setStyleSheet
+            (R"(
+            font-size: 20pt;
+            font-weight: bold;
+            padding: 0 10px;
+            min-width: 50px;
+            min-height: 25px;
+            max-width: 500px;
+            max-height: 250px;
+        )");
+    }
+    if(config=="showPassBtn"){
+        this->setStyleSheet
+            (R"(
+            font-size: 15pt;
+            font-weight: bold;
+            min-width: 5px;
+            min-height: 5px;
+            max-width: 60px;
+            max-height: 60px;
+        )");
+    }
+    update();
+}
