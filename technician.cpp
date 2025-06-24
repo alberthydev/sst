@@ -4,6 +4,7 @@
 #include "session_manager.h"
 #include <QMessageBox>
 #include <QTextBrowser>
+#include <QIcon>
 
 technician::technician(QWidget *parent)
     : QWidget(parent)
@@ -11,7 +12,9 @@ technician::technician(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // PAGES
+    setWindowIcon(QIcon(":/sst.png"));
+
+    // PAGES INDEX
     // 0 - Main
     // 1 - Calls Generico
     // 2 - Users
@@ -36,10 +39,10 @@ technician::technician(QWidget *parent)
     connect(ui->techUserList, &QListWidget::itemSelectionChanged,this, &technician::onTechnicianSelectionChanged);
     connect(ui->requestUserList, &QListWidget::itemSelectionChanged,this, &technician::onRequesterSelectionChanged);
 
-    // Default Colors
-    QColor whiteBk = "#f9f9f9";
-    QColor blueBk = "#3383ff";
-    QColor lightBlueBk = "#5597ff";
+    // Colors
+    QColor whiteBk = 0xf9f9f9;
+    QColor blueBk = 0x3383ff;
+    QColor lightBlueBk = 0x5597ff;
 
     // User Definition
     ui->signInUser->setText(SessionManager::getInstance().getCurrentUserName());
@@ -252,7 +255,7 @@ void technician::populateTable(const QList<CallInfo> &calls){
 
         ui->callsTable->insertRow(currentRow);
 
-        // Preenchendo as novas colunas
+        // Populating Table
         ui->callsTable->setItem(currentRow, 0, new QTableWidgetItem(QString::number(call.id)));
         ui->callsTable->setItem(currentRow, 1, new QTableWidgetItem(call.titulo));
         ui->callsTable->setItem(currentRow, 2, new QTableWidgetItem(call.nome_solicitante));
@@ -324,19 +327,13 @@ void technician::on_editResponBtn_clicked()
 void technician::onTechnicianSelected(int technicianId)
 {
     qDebug() << "Janela principal recebeu o ID do técnico:" << technicianId << "para o chamado" << m_currentCallId;
-    // Manda a facade executar a ação final!
     m_facade->assignTechnicianToCall(m_currentCallId, technicianId);
 }
 
 void technician::onCallUpdateSuccess(const QString &message)
 {
-    // Mostra uma mensagem de sucesso para o usuário
     QMessageBox::information(this, "Sucesso", message);
-
-    // Pede os detalhes do chamado 'novamente para mostrar o novo responsável
     m_facade->getCallDetails(m_currentCallId);
-
-    // Atualiza os contadores do dashboard
     updateCountersDashboard();
 }
 
@@ -346,71 +343,60 @@ void technician::displayChatMessages(const QList<ChatMessageInfo> &messages)
     ui->chatListWidget->setUpdatesEnabled(false);
     ui->chatListWidget->clear();
 
-    // PASSO 1: TORNE A PÁGINA DO CHAT VISÍVEL PRIMEIRO.
     ui->mainInfo->setCurrentIndex(4);
 
-    // PASSO 2: FORCE O QT A PROCESSAR TODAS AS MUDANÇAS PENDENTES.
-    // Esta é a linha "mágica" que resolve problemas de timing de UI.
-    // Ela garante que a página foi desenhada e seus widgets têm tamanho real.
+    // Coloquei aqui para testar ver se para de bugar essa porcaria
     QCoreApplication::processEvents();
 
-    // PASSO 3: AGORA, COM A TELA JÁ VISÍVEL, PODEMOS POPULAR A LISTA COM SEGURANÇA.
-    // O seu código para preencher a lista já está correto.
+    // Populando com as informações
     ui->chatListWidget->setUpdatesEnabled(false);
     ui->chatListWidget->clear();
 
     for (const ChatMessageInfo &msg : messages) {
-        // --- LÓGICA FINAL COM ALINHAMENTO DE BALÃO ---
-
-        // 1. Determina se a mensagem é do usuário logado
+        // Checa se a mensagem é do usuario logado
         bool isCurrentUser = (msg.senderName == SessionManager::getInstance().getCurrentUserName());
 
-        // 2. Cria o nosso "balão de chat" (o QTextBrowser)
+        // Teste de balao do chat
         QTextBrowser *messageBrowser = new QTextBrowser();
         messageBrowser->setFrameStyle(QFrame::NoFrame);
         messageBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         messageBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        // Formatamos o conteúdo com HTML
         QString html = QString("<b>%1</b><br>%2<br><span style='font-size: 8pt; color: #888;'>%3</span>")
                            .arg(msg.senderName)
                            .arg(msg.message.toHtmlEscaped()) // .toHtmlEscaped() para segurança
                            .arg(msg.timestamp.toString("dd/MM/yy hh:mm"));
         messageBrowser->setHtml(html);
 
-        // Estilizamos o balão com cores de fundo diferentes
+        // Estilização
         QString bubbleStyle = isCurrentUser
-                                  ? "background-color: #dcf8c6; border-radius: 10px; padding: 8px;" // Verde claro (enviado)
-                                  : "background-color: #ffffff; border-radius: 10px; padding: 8px;";  // Branco (recebido)
+                                  ? "background-color: #dcf8c6; border-radius: 10px; padding: 8px;"
+                                  : "background-color: #ffffff; border-radius: 10px; padding: 8px;";
         messageBrowser->setStyleSheet(bubbleStyle);
 
-        // 3. Cria o widget container e o layout horizontal
+        // Container para ficar o balão
         QWidget *containerWidget = new QWidget();
         containerWidget->setStyleSheet("border:none;");
         QHBoxLayout *layout = new QHBoxLayout(containerWidget);
-        layout->setContentsMargins(5, 5, 5, 5); // Margem para a linha inteira
+        layout->setContentsMargins(5, 5, 5, 5);
 
-        // 4. A MÁGICA DO ALINHAMENTO
+        // Alinhamento para imitar um chat real
         if (isCurrentUser) {
-            layout->addStretch(); // Mola elástica à ESQUERDA, empurrando o balão para a direita
+            layout->addStretch();
             layout->addWidget(messageBrowser);
         } else {
             layout->addWidget(messageBrowser);
-            layout->addStretch(); // Mola elástica à DIREITA, empurrando o balão para a esquerda
+            layout->addStretch();
         }
 
-        // 5. Crie e adicione o item da lista
         QListWidgetItem *item = new QListWidgetItem();
         ui->chatListWidget->addItem(item);
-
-        // 6. Coloque o CONTAINER (e não o browser diretamente) dentro do item
         ui->chatListWidget->setItemWidget(item, containerWidget);
 
-        // 7. Cálculo final da altura
-        // Limitamos a largura do balão a 75% da tela para um visual melhor
+        // Teste de calculo de altura com limite de 75% para melhorar a visualização
         messageBrowser->document()->setTextWidth(ui->chatListWidget->viewport()->width() * 0.75);
         QSize size = messageBrowser->document()->size().toSize();
-        item->setSizeHint(QSize(size.width(), size.height() + 50)); // +10 de padding
+        item->setSizeHint(QSize(size.width(), size.height() + 50));
     }
 
     ui->chatListWidget->setUpdatesEnabled(true);
@@ -439,7 +425,7 @@ void technician::on_finishCallBtn_clicked()
 void technician::refreshUserLists()
 {
     qDebug() << "Recebido sinal de sucesso na operação de usuário. Recarregando listas...";
-    // Apenas pede para a facade buscar os dados novamente.
+    // Só pede para o facade buscar os dados novamente.
     // O slot 'displayUserLists' que já existe fará o resto do trabalho.
     m_facade->requestUserLists();
 
@@ -454,32 +440,28 @@ void technician::onOperationSuccess(const QString &message)
 void technician::on_rmvUserBtn_clicked()
 {
     QListWidgetItem* selectedItem = nullptr;
-    QString userRole = ""; // Para deixar a mensagem de confirmação mais clara
+    QString userRole = "";
 
-    // Primeiro, verificamos se há algo selecionado na lista de técnicos
     if (!ui->techUserList->selectedItems().isEmpty()) {
-        // Se a lista de itens selecionados não está vazia, pegamos o primeiro (e único) item
         selectedItem = ui->techUserList->selectedItems().first();
         userRole = "técnico";
     }
-    // Se não, verificamos a lista de solicitantes
+
     else if (!ui->requestUserList->selectedItems().isEmpty()) {
         selectedItem = ui->requestUserList->selectedItems().first();
         userRole = "solicitante";
     }
 
-    // Se, depois de checar as duas listas, não encontramos nada, então nada está selecionado.
     if (!selectedItem) {
         QMessageBox::warning(this, "Atenção", "Por favor, selecione um usuário para remover.");
         return;
     }
 
-    // O resto da lógica continua igual, mas agora com a certeza de ter o item certo
+    // Verificando se ta correto a seleção, por que tava bugando tudo
     int userId = selectedItem->data(Qt::UserRole).toInt();
     QString userName = selectedItem->text();
 
     QMessageBox::StandardButton reply;
-    // Mensagem de confirmação melhorada!
     reply = QMessageBox::question(this, "Confirmar Remoção",
                                   QString("Tem certeza que deseja remover o %1 '%2'?")
                                       .arg(userRole)
@@ -494,7 +476,6 @@ void technician::on_rmvUserBtn_clicked()
 
 void technician::on_editUserBtn_clicked()
 {
-    // --- Passo 1: Descobrir o item selecionado de forma robusta ---
     QListWidgetItem* selectedItem = nullptr;
     if (!ui->techUserList->selectedItems().isEmpty()) {
         selectedItem = ui->techUserList->selectedItems().first();
@@ -503,18 +484,13 @@ void technician::on_editUserBtn_clicked()
         selectedItem = ui->requestUserList->selectedItems().first();
     }
 
-    // Se nada foi selecionado, exibe um aviso e para.
     if (!selectedItem) {
         QMessageBox::warning(this, "Atenção", "Por favor, selecione um usuário para editar.");
         return;
     }
 
-    // --- Passo 2: Pegar o ID do usuário ---
     int userId = selectedItem->data(Qt::UserRole).toInt();
 
-    // --- Passo 3 (A LÓGICA CORRETA PARA STACKEDWIDGET): ---
-    // Apenas guardamos o ID e pedimos os detalhes para a Facade.
-    // A tela NÃO muda aqui. Ela só vai mudar quando a Facade responder.
     qDebug() << "Botão Editar clicado para o usuário ID:" << userId << ". Solicitando detalhes...";
     m_currentUserEditingId = userId;
     m_facade->requestUserDetails(userId);
@@ -523,21 +499,17 @@ void technician::on_editUserBtn_clicked()
 
 void technician::on_createUserBtn_clicked()
 {
-    // 1. Define o modo: 0 significa "criar novo"
+    // ID = 0 significa que esta criando um novo usuario
     m_currentUserEditingId = 0;
 
-    // 2. Limpa os campos do formulário para garantir que não há dados antigos
     ui->nameLineEdit->clear();
     ui->loginLineEdit->clear();
     ui->passLineEdit->clear();
     ui->passLineEdit->setPlaceholderText("Digite uma senha (obrigatório)");
-    ui->typeComboBox->setCurrentIndex(0); // Põe de volta na primeira opção
+    ui->typeComboBox->setCurrentIndex(0);
 
-    // 3. Muda o título da página
-    ui->titleUser->setText("Novo Usuário"); // Supondo que você tenha um label para o título
+    ui->titleUser->setText("Novo Usuário");
 
-    // 4. Muda para a página de detalhes do usuário
-    // **Substitua '5' pelo índice correto da sua página de detalhes no QStackedWidget**
     ui->mainInfo->setCurrentIndex(3);
 }
 
@@ -551,50 +523,41 @@ void technician::populateUserDetailsForm(const UserInfo &info)
 
     ui->titleUser->setText("Editar Usuário");
 
-    // Agora que os dados estão prontos, mudamos de tela
     ui->mainInfo->setCurrentIndex(3);
 }
 
 void technician::on_okEditUserBtn_clicked()
 {
-    // Validação básica
     if (ui->nameLineEdit->text().isEmpty() || ui->loginLineEdit->text().isEmpty()) {
         QMessageBox::warning(this, "Atenção", "Nome e E-mail são campos obrigatórios.");
         return;
     }
-    // No modo de criação (ID=0), a senha também é obrigatória
+    // ID=0 a senha é obrigatória por que é um novo usuario
     if (m_currentUserEditingId == 0 && ui->passLineEdit->text().isEmpty()) {
         QMessageBox::warning(this, "Atenção", "A senha é obrigatória para novos usuários.");
         return;
     }
 
-    // Pede para a facade salvar, passando o ID que guardamos
+    // Chama o Facade
     m_facade->saveUser(m_currentUserEditingId,
                        ui->nameLineEdit->text(),
                        ui->loginLineEdit->text(),
                        ui->passLineEdit->text(),
                        ui->typeComboBox->currentText());
-
-    // Após salvar, podemos voltar para a lista de usuários.
-    // Opcional: só fazer isso no slot de sucesso (onUserSaveSuccess)
-    // ui->mainStackedWidget->setCurrentIndex(4); // **Substitua 4 pelo índice da lista**
 }
 
 void technician::onTechnicianSelectionChanged()
 {
-    // Se o usuário realmente selecionou um item na lista de técnicos
-    // (e não apenas limpou a seleção), então...
+    // Tentativa de resolver o bug de seleção de usuário
     if (!ui->techUserList->selectedItems().isEmpty()) {
-        // ...limpa programaticamente a seleção da outra lista.
         ui->requestUserList->clearSelection();
     }
 }
 
 void technician::onRequesterSelectionChanged()
 {
-    // Se o usuário realmente selecionou um item na lista de solicitantes...
+    // Tentativa de resolver o bug de seleção de usuário
     if (!ui->requestUserList->selectedItems().isEmpty()) {
-        // ...limpa programaticamente a seleção da outra lista.
         ui->techUserList->clearSelection();
     }
 }

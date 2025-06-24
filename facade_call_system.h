@@ -17,7 +17,6 @@ class facade_call_system : public QObject
 
 public:
     explicit facade_call_system(QObject *parent = nullptr);
-
     Q_INVOKABLE int callCount(const QString &status = QString());
     void getTechList();
     void assignTechnicianToCaller(int callId, int techId);

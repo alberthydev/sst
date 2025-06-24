@@ -1,4 +1,3 @@
-//#include "principal.h"
 #include <QApplication>
 #include <QDebug>
 #include "principal.h"
@@ -10,6 +9,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    // Garante que inicializa o banco
     DatabaseManager::getInstance();
 
     Principal w;

@@ -9,7 +9,6 @@ void facade_call_system::getCallList(const QString &status, int techId, int requ
     QList<CallInfo> list;
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
 
-    // SQL CORRIGIDO: Adicionamos o LEFT JOIN para o técnico, igual na outra função
     QString sql = "SELECT "
                   "    c.id, c.titulo, c.descricao, c.status, c.data_abertura, c.data_fechamento, c.tipo, c.prioridade, "
                   "    u_sol.nome AS nome_solicitante, "
@@ -62,15 +61,12 @@ void facade_call_system::getCallList(const QString &status, int techId, int requ
             info.tipo = query.value("tipo").toString();
             info.prioridade = query.value("prioridade").toString();
             info.nome_solicitante = query.value("nome_solicitante").toString();
-
-            // Agora esta linha vai funcionar, pois a query retorna o campo
             info.nome_tecnico = query.value("nome_tecnico").toString();
 
             list.append(info);
         }
         emit readyCallList(list);
     } else {
-        // Renomeei o sinal de erro para o nome que você usou, operationFailed
         emit operationFailed("Erro ao carregar chamados: " + query.lastError().text());
     }
 }
@@ -197,18 +193,14 @@ void facade_call_system::assignTechnicianToCall(int ticketId, int technicianId)
         return;
     }
 
-    // --- Step 4: Notificar a UI sobre o sucesso ---
     qDebug() << "Chamado" << ticketId << "atualizado com sucesso para o técnico" << technicianId;
     emit callUpdatedSuccessfully("Técnico atribuído com sucesso!");
 }
 
-// Função para buscar o histórico de mensagens de um chamado
 void facade_call_system::requestChatMessages(int callId)
 {
     QList<ChatMessageInfo> messages;
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
-
-    // Query com JOIN para pegar o nome do remetente
     QString sql = "SELECT m.mensagem, m.data_envio, u.nome AS senderName "
                   "FROM ChatMessage m "
                   "INNER JOIN Usuario u ON m.id_remetente = u.id "
@@ -232,15 +224,12 @@ void facade_call_system::requestChatMessages(int callId)
     }
 }
 
-// Função para enviar uma nova mensagem
 void facade_call_system::sendChatMessage(int callId, const QString &message)
 {
-    // Verifica se a mensagem não está vazia
     if (message.trimmed().isEmpty()) {
         return;
     }
 
-    // Pega o ID do usuário logado do nosso SessionManager!
     int senderId = SessionManager::getInstance().getCurrentUserId();
     if (!SessionManager::getInstance().isUserLoggedIn()) {
         qWarning() << "Tentativa de enviar mensagem sem estar logado.";
@@ -257,15 +246,12 @@ void facade_call_system::sendChatMessage(int callId, const QString &message)
     if (!query.exec()) {
         qWarning() << "Falha ao inserir nova mensagem no chat:" << query.lastError().text();
     } else {
-        // Se a mensagem foi enviada com sucesso, pede para recarregar o chat
         qDebug() << "Mensagem enviada com sucesso. Recarregando histórico do chat.";
         requestChatMessages(callId);
     }
 }
 
 void facade_call_system::closeCall(int callId){
-    // --- Step 1: Carregar o estado atual do ticket ---
-    // (O código para carregar o Ticket do banco é igual ao de assignTechnicianToTicket)
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
     query.prepare("SELECT * FROM Chamado WHERE id = :id");
     query.bindValue(":id", callId);
@@ -280,18 +266,13 @@ void facade_call_system::closeCall(int callId){
         return;
     }
 
-    // --- Step 2: VERIFICAR A REGRA DE NEGÓCIO ---
-    // Verificamos o estado ANTES de tentar a ação.
     if (call.status() != "Em Andamento") {
         emit operationFailed("Para concluir, o chamado precisa ter um técnico atribuído.");
         return;
     }
 
-    // --- Step 3: Usar o Padrão State para executar a ação ---
     call.close();
 
-    // --- Step 4: Salvar o estado atualizado no banco ---
-    // (Aqui podemos adicionar o update da data de fechamento no futuro)
     query.prepare("UPDATE Chamado SET status = :status, data_fechamento = :closingDate WHERE id = :id");
     query.bindValue(":status", call.status());
     query.bindValue(":closingDate", call.closingDate());
@@ -302,7 +283,6 @@ void facade_call_system::closeCall(int callId){
         return;
     }
 
-    // --- Step 5: Notificar a UI sobre o sucesso ---
     emit callUpdatedSuccessfully("Chamado concluído com sucesso!");
 }
 
@@ -337,7 +317,6 @@ void facade_call_system::requestUserLists()
 
 void facade_call_system::deleteUser(int userId)
 {
-    // Regra de negócio: não permitir deletar o admin padrão
     if (userId == 1) {
         emit operationFailed("O usuário Administrador padrão não pode ser removido.");
         return;
@@ -391,22 +370,17 @@ void facade_call_system::saveUser(int userId, const QString &name, const QString
         query.bindValue(":type", type);
 
     } else {
-        // --- LÓGICA DE UPDATE DINÂMICO (A MUDANÇA ESTÁ AQUI) ---
-
-        // 1. Começamos a montar a query SQL apenas com os campos que sempre mudam.
         QString sql = "UPDATE Usuario SET nome = :name, email = :email, tipo = :type";
 
-        // 2. SÓ adicionamos a atualização de senha SE uma nova senha foi fornecida.
         if (!password.isEmpty()) {
             sql += ", senha = :password";
         }
 
-        // 3. Terminamos a query com a cláusula WHERE.
         sql += " WHERE id = :id";
 
         query.prepare(sql);
 
-        // 4. Fazemos o bind dos valores. Note que o bind da senha também é condicional.
+        // Bloco dos binds
         query.bindValue(":name", name);
         query.bindValue(":email", email);
         query.bindValue(":type", type);
@@ -431,10 +405,8 @@ void facade_call_system::saveUser(int userId, const QString &name, const QString
 
 void facade_call_system::createNewCall(const QString &title, const QString &type, const QString &priority, const QString &description)
 {
-    // Pega o ID do usuário da sessão atual. A mágica acontece aqui!
     int requesterId = SessionManager::getInstance().getCurrentUserId();
 
-    // Verificação de segurança
     if (!SessionManager::getInstance().isUserLoggedIn()) {
         emit operationFailed("Nenhum usuário logado. Não é possível abrir o chamado.");
         return;
@@ -466,11 +438,9 @@ void facade_call_system::validateLogin(const QString &email, const QString &pass
     query.bindValue(":email", email);
 
     if (query.exec() && query.next()) {
-        // Usuário com este email foi encontrado, agora checamos a senha
         QString storedPassword = query.value("senha").toString();
 
         if (storedPassword == password) {
-            // Senha correta! Login bem-sucedido.
             int userId = query.value("id").toInt();
             QString name = query.value("nome").toString();
             QString userType = query.value("tipo").toString();
@@ -478,12 +448,10 @@ void facade_call_system::validateLogin(const QString &email, const QString &pass
             qDebug() << "Login bem-sucedido para o usuário:" << name;
             emit loginSuccessful(userId, name, userType);
         } else {
-            // Senha incorreta
             qWarning() << "Tentativa de login com senha incorreta para o email:" << email;
             emit operationFailed("Usuário ou senha inválidos.");
         }
     } else {
-        // Usuário com este email não foi encontrado
         qWarning() << "Tentativa de login com email não existente:" << email;
         emit operationFailed("Usuário ou senha inválidos.");
     }

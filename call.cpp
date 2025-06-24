@@ -23,7 +23,6 @@ void Call::assignTechnician(int techId) {
 
 void Call::close()
 {
-    // Apenas repassa a chamada para o objeto de estado atual
     if (m_currentState) {
         m_currentState->close(this);
     }

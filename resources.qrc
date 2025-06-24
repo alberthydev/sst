@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sst.png</file>
+    </qresource>
+</RCC>

@@ -4,12 +4,15 @@
 #include "technician.h"
 #include "requester.h"
 #include <QMessageBox>
+#include <QIcon>
 
 Principal::Principal(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Principal)
 {
     ui->setupUi(this);
+
+    setWindowIcon(QIcon(":/sst.png"));
 
     m_facade = new facade_call_system(this);
 
@@ -19,9 +22,9 @@ Principal::Principal(QWidget *parent)
     connect(ui->userLoginLineEdit, &QLineEdit::returnPressed, this, &Principal::on_loginBtn_clicked);
 
     // Colors
-    QColor whiteBk = "#f9f9f9";
-    QColor blueBk = "#3383ff";
-    QColor lightBlueBk = "#5597ff";
+    QColor whiteBk = 0xf9f9f9;
+    QColor blueBk = 0x3383ff;
+    QColor lightBlueBk = 0x5597ff;
 
     // Login Button
     ui->loginBtn->setConfigs("ENTRAR", whiteBk, blueBk, lightBlueBk, "loginBtn");
@@ -41,13 +44,11 @@ void Principal::on_loginBtn_clicked()
     QString email = ui->userLoginLineEdit->text().trimmed();
     QString password = ui->userPassLineEdit->text();
 
-    // Validação de campos vazios
     if (email.isEmpty() || password.isEmpty()) {
         QMessageBox::warning(this, "Atenção", "Por favor, preencha o e-mail e a senha.");
         return;
     }
 
-    // Pede para a Facade validar as credenciais
     m_facade->validateLogin(email, password);
 }
 
@@ -65,10 +66,8 @@ void Principal::on_showPassBtn_clicked()
 
 void Principal::onLoginSuccess(int userId, const QString &name, const QString &userType)
 {
-    // 1. Inicia a sessão com os dados do usuário
     SessionManager::getInstance().login(userId, name, userType);
 
-    // 2. Decide qual janela abrir com base no tipo de usuário
     if (userType == "Tecnico" || userType == "Admin") {
         technician *techWindow = new technician(); // Cria a janela de técnico
         techWindow->show();
@@ -77,11 +76,9 @@ void Principal::onLoginSuccess(int userId, const QString &name, const QString &u
         reqWindow->show();
     }
 
-    // 3. Fecha a janela de login
     this->close();
 }
 
-// Implementação do slot de FALHA no login
 void Principal::onLoginFailed(const QString &errorMessage)
 {
     QMessageBox::critical(this, "Falha no Login", errorMessage);

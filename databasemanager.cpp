@@ -2,9 +2,8 @@
 #include "qsqlquery.h"
 #include <QDebug>
 
-// O construtor é chamado apenas uma vez, na primeira chamada de getInstance().
 DatabaseManager::DatabaseManager() {
-    m_database = QSqlDatabase::addDatabase("QSQLITE"); // Ex: usando SQLite
+    m_database = QSqlDatabase::addDatabase("QSQLITE");
     m_database.setDatabaseName("sst_db.db");
 
     if (!m_database.open()) {
@@ -23,8 +22,6 @@ DatabaseManager::~DatabaseManager() {
 }
 
 DatabaseManager& DatabaseManager::getInstance() {
-    // A instância estática é criada na primeira vez que esta linha é executada
-    // e destruída automaticamente quando o programa termina. É thread-safe em C++11+.
     static DatabaseManager instance;
     return instance;
 }
@@ -33,11 +30,10 @@ QSqlDatabase DatabaseManager::getConnection() {
     return m_database;
 }
 
-// Implementação da função que cria as tabelas
 void DatabaseManager::createTables() {
     QSqlQuery query(m_database);
 
-    // --- Tabela Usuario ---
+    // Usuário
     QString userTableSql = "CREATE TABLE IF NOT EXISTS Usuario ("
                            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                            "nome TEXT NOT NULL, "
@@ -49,9 +45,9 @@ void DatabaseManager::createTables() {
         qWarning() << "Falha ao criar tabela 'Usuario':" << query.lastError().text();
     }
 
+    // Adiciona o administrador para gerenciar usuários toda vez que for compilado o programa
     query.prepare("SELECT COUNT(*) FROM Usuario WHERE email = 'admin@sst.com'");
     if (query.exec() && query.next() && query.value(0).toInt() == 0) {
-        // Se a contagem for 0, o admin não existe, então o inserimos.
         query.prepare("INSERT INTO Usuario (nome, email, senha, tipo) "
                       "VALUES ('Administrador', 'admin@sst.com', 'admin', 'Admin')");
         if (!query.exec()) {
@@ -61,7 +57,7 @@ void DatabaseManager::createTables() {
         }
     }
 
-    // --- Tabela Ticket (Chamado) ---
+    // Chamado
     QString callTableSql = "CREATE TABLE IF NOT EXISTS Chamado ("
                              "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                              "titulo TEXT NOT NULL, "
@@ -80,7 +76,7 @@ void DatabaseManager::createTables() {
         qWarning() << "Falha ao criar tabela 'Chamado':" << query.lastError().text();
     }
 
-    // --- Tabela ChatMessage ---
+    // Mensagens do Chat
     QString chatMessageTableSql = "CREATE TABLE IF NOT EXISTS ChatMessage ("
                                   "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                                   "id_chamado INTEGER NOT NULL, "

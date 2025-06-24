@@ -2,7 +2,6 @@
 #include "qpainter.h"
 #include "qpropertyanimation.h"
 
-// Construtor padrão (para Qt Designer)
 HoverWidget::HoverWidget(QWidget *parent)
     : QPushButton(parent),
     m_bgColor(Qt::white),
@@ -12,7 +11,6 @@ HoverWidget::HoverWidget(QWidget *parent)
     setAttribute(Qt::WA_Hover, true);
 }
 
-// Construtor completo (opcional, útil se quiser criar manualmente)
 HoverWidget::HoverWidget(const QColor &normalColor,
                          const QColor &hoverColor,
                          QWidget *parent)
@@ -43,14 +41,10 @@ void HoverWidget::leaveEvent(QEvent *) {
 void HoverWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
-    // Fundo arredondado
     painter.setBrush(m_bgColor);
     painter.setPen(Qt::NoPen);
     painter.drawRoundedRect(rect(), 12, 12);
-
-    // Texto centralizado
-    painter.setPen(m_textColor); // ou a cor que quiser
+    painter.setPen(m_textColor);
     painter.setFont(font());
     painter.drawText(rect(), Qt::AlignCenter, text());
 }
