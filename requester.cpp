@@ -138,7 +138,7 @@ void requester::populateCallsTable(const QList<CallInfo> &calls)
         ui->requesterCallsTableWidget->setItem(currentRow, 0, new QTableWidgetItem(QString::number(call.id)));
         ui->requesterCallsTableWidget->setItem(currentRow, 1, new QTableWidgetItem(call.titulo));
         ui->requesterCallsTableWidget->setItem(currentRow, 2, new QTableWidgetItem(call.nome_solicitante));
-        ui->requesterCallsTableWidget->setItem(currentRow, 3, new QTableWidgetItem(call.data_abertura.toString("dd/MM/yy hh:mm")));
+        ui->requesterCallsTableWidget->setItem(currentRow, 3, new QTableWidgetItem(call.data_abertura.toLocalTime().toString("dd/MM/yy hh:mm")));
         ui->requesterCallsTableWidget->setItem(currentRow, 4, new QTableWidgetItem(call.tipo));
         ui->requesterCallsTableWidget->setItem(currentRow, 5, new QTableWidgetItem(call.prioridade));
         ui->requesterCallsTableWidget->setItem(currentRow, 6, new QTableWidgetItem(call.status));
@@ -194,11 +194,11 @@ void requester::onMyCallDoubleClicked(QTableWidgetItem *item)
         return;
     }
 
-    int ticketId = idItem->text().toInt();
+    int callId = idItem->text().toInt();
 
-    qDebug() << "Solicitante deu duplo clique no chamado ID:" << ticketId << ". Buscando detalhes...";
+    qDebug() << "Solicitante deu duplo clique no chamado ID:" << callId << ". Buscando detalhes...";
 
-    m_facade->getCallDetails(ticketId);
+    m_facade->getCallDetails(callId);
 }
 
 void requester::displayCallDetails(const CallInfo &info)
@@ -216,7 +216,7 @@ void requester::displayCallDetails(const CallInfo &info)
         ui->messageLineEdit->setHidden(true);
         ui->sendMessageBtn->setHidden(true);
         if (info.data_fechamento.isValid()) {
-            QString formattedDate = info.data_fechamento.toString("dd/MM/yyyy 'às' hh:mm");
+            QString formattedDate = info.data_fechamento.toLocalTime().toString("dd/MM/yyyy 'às' hh:mm");
             ui->statusClosedDateLabel->setText("Concluído em: " + formattedDate);
         } else {
             ui->statusClosedDateLabel->setText("Status: Fechado");
@@ -256,7 +256,7 @@ void requester::displayChatMessages(const QList<ChatMessageInfo> &messages)
         QString html = QString("<b>%1</b><br>%2<br><span style='font-size: 8pt; color: #888;'>%3</span>")
                            .arg(msg.senderName)
                            .arg(msg.message.toHtmlEscaped()) // .toHtmlEscaped() para segurança
-                           .arg(msg.timestamp.toString("dd/MM/yy hh:mm"));
+                           .arg(msg.timestamp.toLocalTime().toString("dd/MM/yy hh:mm"));
         messageBrowser->setHtml(html);
 
         // Estilização

@@ -25,7 +25,7 @@ technician::technician(QWidget *parent)
     m_facade = new facade_call_system(this);
 
     connect(m_facade, &facade_call_system::readyCallList, this, &technician::populateTable);
-    connect(m_facade, &facade_call_system::readyCallDetails, this, &technician::showCallDetails);
+    connect(m_facade, &facade_call_system::readyCallDetails, this, &technician::displayCallDetails);
     connect(ui->callsTable, &QTableWidget::itemDoubleClicked, this, &technician::onItemTableDoubleClick);
     connect(m_facade, &facade_call_system::callUpdatedSuccessfully, this, &technician::onCallUpdateSuccess);
     connect(m_facade, &facade_call_system::chatMessagesReady, this, &technician::displayChatMessages);
@@ -218,7 +218,7 @@ void technician::onItemTableDoubleClick(QTableWidgetItem *item){
     m_facade->getCallDetails(callId);
 }
 
-void technician::showCallDetails(const CallInfo &info){
+void technician::displayCallDetails(const CallInfo &info){
     qDebug() << "Recebendo detalhes para o chamado:" << info.titulo;
 
     m_currentCallId = info.id;
@@ -229,7 +229,7 @@ void technician::showCallDetails(const CallInfo &info){
 
     if (info.status == "Fechado") {
         qDebug() << "Chamado está Fechado, escondendo o botão de atribuir.";
-        ui->closedDate->setText("Concluído em: " + info.data_fechamento.toString("dd/MM/yyyy 'às' hh:mm"));
+        ui->closedDate->setText("Concluído em: " + info.data_fechamento.toLocalTime().toString("dd/MM/yyyy 'às' hh:mm"));
         ui->editResponBtn->setVisible(false);
         ui->addComentBtn->setVisible(false);
         ui->messageLineEdit->setVisible(false);
@@ -276,13 +276,13 @@ void technician::populateTable(const QList<CallInfo> &calls){
         ui->callsTable->setItem(currentRow, 0, new QTableWidgetItem(QString::number(call.id)));
         ui->callsTable->setItem(currentRow, 1, new QTableWidgetItem(call.titulo));
         ui->callsTable->setItem(currentRow, 2, new QTableWidgetItem(call.nome_solicitante));
-        ui->callsTable->setItem(currentRow, 3, new QTableWidgetItem(call.data_abertura.toString("dd/MM/yy hh:mm")));
+        ui->callsTable->setItem(currentRow, 3, new QTableWidgetItem(call.data_abertura.toLocalTime().toString("dd/MM/yy hh:mm")));
         ui->callsTable->setItem(currentRow, 4, new QTableWidgetItem(call.tipo));
         ui->callsTable->setItem(currentRow, 5, new QTableWidgetItem(call.prioridade));
 
         QDateTime closingDate = call.data_fechamento;
 
-        QString closingDateStr = closingDate.isValid() ? closingDate.toString("dd/MM/yy hh:mm") : "";
+        QString closingDateStr = closingDate.isValid() ? closingDate.toLocalTime().toString("dd/MM/yy hh:mm") : "";
         ui->callsTable->setItem(currentRow, 6, new QTableWidgetItem(closingDateStr));
     }
 
@@ -382,7 +382,7 @@ void technician::displayChatMessages(const QList<ChatMessageInfo> &messages)
         QString html = QString("<b>%1</b><br>%2<br><span style='font-size: 8pt; color: #888;'>%3</span>")
                            .arg(msg.senderName)
                            .arg(msg.message.toHtmlEscaped()) // .toHtmlEscaped() para segurança
-                           .arg(msg.timestamp.toString("dd/MM/yy hh:mm"));
+                           .arg(msg.timestamp.toLocalTime().toString("dd/MM/yy hh:mm"));
         messageBrowser->setHtml(html);
 
         // Estilização

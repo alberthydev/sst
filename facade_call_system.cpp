@@ -56,8 +56,14 @@ void facade_call_system::getCallList(const QString &status, int techId, int requ
             info.titulo = query.value("titulo").toString();
             info.descricao = query.value("descricao").toString();
             info.status = query.value("status").toString();
-            info.data_abertura = query.value("data_abertura").toDateTime();
-            info.data_fechamento = query.value("data_fechamento").toDateTime();
+            QString creationDateString = query.value("data_abertura").toString();
+            info.data_abertura = QDateTime::fromString(creationDateString, "yyyy-MM-dd hh:mm:ss");
+            info.data_abertura.setTimeSpec(Qt::UTC);
+            QString closingDateString = query.value("data_fechamento").toString();
+            if (!query.value("data_fechamento").isNull()) {
+                info.data_fechamento = QDateTime::fromString(query.value("data_fechamento").toString(), Qt::ISODateWithMs);
+                info.data_fechamento.setTimeSpec(Qt::UTC);
+            }
             info.tipo = query.value("tipo").toString();
             info.prioridade = query.value("prioridade").toString();
             info.nome_solicitante = query.value("nome_solicitante").toString();
@@ -99,8 +105,14 @@ void facade_call_system::getCallDetails(int callId){
         info.titulo = query.value("titulo").toString();
         info.descricao = query.value("descricao").toString();
         info.status = query.value("status").toString();
-        info.data_abertura = query.value("data_abertura").toDateTime();
-        info.data_fechamento = query.value("data_fechamento").toDateTime();
+        QString creationDateString = query.value("data_abertura").toString();
+        info.data_abertura = QDateTime::fromString(creationDateString, "yyyy-MM-dd hh:mm:ss");
+        info.data_abertura.setTimeSpec(Qt::UTC);
+        QString closingDateString = query.value("data_fechamento").toString();
+        if (!query.value("data_fechamento").isNull()) {
+            info.data_fechamento = QDateTime::fromString(query.value("data_fechamento").toString(), Qt::ISODateWithMs);
+            info.data_fechamento.setTimeSpec(Qt::UTC);
+        }
         info.tipo = query.value("tipo").toString();
         info.prioridade = query.value("prioridade").toString();
         info.nome_solicitante = query.value("nome_solicitante").toString();
@@ -157,11 +169,11 @@ void facade_call_system::requestTechnicianList() {
     }
 }
 
-void facade_call_system::assignTechnicianToCall(int ticketId, int technicianId)
+void facade_call_system::assignTechnicianToCall(int callId, int technicianId)
 {
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
     query.prepare("SELECT * FROM Chamado WHERE id = :id");
-    query.bindValue(":id", ticketId);
+    query.bindValue(":id", callId);
 
     Call call;
     if (query.exec() && query.next()) {
@@ -193,7 +205,7 @@ void facade_call_system::assignTechnicianToCall(int ticketId, int technicianId)
         return;
     }
 
-    qDebug() << "Chamado" << ticketId << "atualizado com sucesso para o técnico" << technicianId;
+    qDebug() << "Chamado" << callId << "atualizado com sucesso para o técnico" << technicianId;
     emit callUpdatedSuccessfully("Técnico atribuído com sucesso!");
 }
 
@@ -215,7 +227,9 @@ void facade_call_system::requestChatMessages(int callId)
             ChatMessageInfo info;
             info.senderName = query.value("senderName").toString();
             info.message = query.value("mensagem").toString();
-            info.timestamp = query.value("data_envio").toDateTime();
+            QString creationDateString = query.value("data_envio").toString();
+            info.timestamp = QDateTime::fromString(creationDateString, "yyyy-MM-dd hh:mm:ss");
+            info.timestamp.setTimeSpec(Qt::UTC);
             messages.append(info);
         }
         emit chatMessagesReady(messages);

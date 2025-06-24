@@ -34,7 +34,7 @@ private slots:
     void on_completedCalls_clicked();
     void populateTable(const QList<CallInfo> &calls);
     void onItemTableDoubleClick(QTableWidgetItem *item);
-    void showCallDetails(const CallInfo &info);
+    void displayCallDetails(const CallInfo &info);
     void on_editResponBtn_clicked();
     void onTechnicianSelected(int technicianId);
     void onCallUpdateSuccess(const QString &message);
