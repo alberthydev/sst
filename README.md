@@ -16,6 +16,7 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 - Cadastro e gerenciamento de usuários.
 - Cadastro e gerenciamento de técnicos.
 - Abertura e acompanhamento de chamados técnicos.
+- Chat entre o técnico e o solicitante
 - Interface intuitiva baseada em Qt Designer.
 
 ---
@@ -38,9 +39,15 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 
 ---
 
-## Como Compilar e Executar
+## Como Executar (CERTIFIQUE-SE DE TER TODOS OS PACOTES CORRETOS COM O QT MAINTENCE TOOL)
 
-### Usando Qt Creator (recomendado)
+### Windows
+1. Baixe a release mais recente do repositório
+2. Extraia a pasta
+3. Execute o SST.exe
+
+### Linux/MAC
+#### Usando Qt Creator (recomendado)
 
 1. Clone o repositório:
 
@@ -55,7 +62,7 @@ git clone https://github.com/alberthydev/sst.git
 4. Compile e execute o projeto.
 
 
-## Usando linha de comando com CMake
+#### Usando linha de comando com CMake
 
 1. Clone o repositório:
    
