@@ -39,7 +39,7 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 
 ---
 
-## Como Executar (CERTIFIQUE-SE DE TER TODOS OS PACOTES CORRETOS COM O QT MAINTENCE TOOL)
+## Como Executar 
 
 ### Windows
 1. Baixe a release mais recente do repositório
@@ -47,7 +47,7 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 3. Execute o SST.exe
 
 ### Linux/MAC
-#### Usando Qt Creator (recomendado)
+#### Usando Qt Creator (recomendado) (CERTIFIQUE-SE DE TER TODOS OS PACOTES CORRETOS COM O QT MAINTENCE TOOL)
 
 1. Clone o repositório:
 
@@ -62,7 +62,7 @@ git clone https://github.com/alberthydev/sst.git
 4. Compile e execute o projeto.
 
 
-#### Usando linha de comando com CMake
+#### Usando linha de comando com CMake (CERTIFIQUE-SE DE TER TODOS OS PACOTES CORRETOS COM O QT MAINTENCE TOOL)
 
 1. Clone o repositório:
    
