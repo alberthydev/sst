@@ -38,6 +38,7 @@ technician::technician(QWidget *parent)
     connect(m_facade, &facade_call_system::userSavedSuccessfully, this, &technician::onOperationSuccess);
     connect(ui->techUserList, &QListWidget::itemSelectionChanged,this, &technician::onTechnicianSelectionChanged);
     connect(ui->requestUserList, &QListWidget::itemSelectionChanged,this, &technician::onRequesterSelectionChanged);
+    connect(ui->messageLineEdit, &QLineEdit::returnPressed, this, &technician::on_addComentBtn_clicked);
 
     // Colors
     QColor whiteBk = 0xf9f9f9;
@@ -88,7 +89,7 @@ technician::technician(QWidget *parent)
     ui->backUserEditBtn->setConfigs("\u2190", whiteBk, blueBk, lightBlueBk, "defaultBtn");
     ui->okEditUserBtn->setConfigs("OK", whiteBk, blueBk, lightBlueBk, "defaultBtn");
     ui->backUserBtn->setConfigs("\u2190", whiteBk, blueBk, lightBlueBk, "defaultBtn");
-    ui->rmvUserBtn->setConfigs("Remover Usuário", whiteBk, blueBk, lightBlueBk, "defaultBtn");
+    ui->rmvUserBtn->setConfigs("Alterar Status", whiteBk, blueBk, lightBlueBk, "defaultBtn");
     ui->editUserBtn->setConfigs("Editar Usuário", whiteBk, blueBk, lightBlueBk, "defaultBtn");
     ui->createUserBtn->setConfigs("Criar Usuário", whiteBk, blueBk, lightBlueBk, "defaultBtn");
     ui->okCallsBtn->setConfigs("\u2190", whiteBk, blueBk, lightBlueBk, "defaultBtn");
@@ -151,15 +152,31 @@ void technician::displayUserLists(const QList<UserInfo> &technicians, const QLis
 {
     ui->techUserList->clear();
     for (const UserInfo &user : technicians) {
-        QListWidgetItem *item = new QListWidgetItem(user.name);
+        QString statusLabel = user.isActive ? "[ATIVO]" : "[INATIVO]";
+        QString displayText = QString("%1 %2").arg(user.name).arg(statusLabel);
+        QListWidgetItem *item = new QListWidgetItem(displayText);
         item->setData(Qt::UserRole, user.id);
+        item->setData(Qt::UserRole + 1, user.isActive);
+
+        if (!user.isActive) {
+            item->setForeground(Qt::gray);
+        }
+
         ui->techUserList->addItem(item);
     }
 
     ui->requestUserList->clear();
     for (const UserInfo &user : requesters) {
-        QListWidgetItem *item = new QListWidgetItem(user.name);
+        QString statusLabel = user.isActive ? "[ATIVO]" : "[INATIVO]";
+        QString displayText = QString("%1 %2").arg(user.name).arg(statusLabel);
+        QListWidgetItem *item = new QListWidgetItem(displayText);
         item->setData(Qt::UserRole, user.id);
+        item->setData(Qt::UserRole + 1, user.isActive);
+
+        if (!user.isActive) {
+            item->setForeground(Qt::gray);
+        }
+
         ui->requestUserList->addItem(item);
     }
 }
@@ -453,23 +470,25 @@ void technician::on_rmvUserBtn_clicked()
     }
 
     if (!selectedItem) {
-        QMessageBox::warning(this, "Atenção", "Por favor, selecione um usuário para remover.");
+        QMessageBox::warning(this, "Atenção", "Por favor, selecione um usuário para alterar o status.");
         return;
     }
 
     // Verificando se ta correto a seleção, por que tava bugando tudo
     int userId = selectedItem->data(Qt::UserRole).toInt();
-    QString userName = selectedItem->text();
+    bool isActive = selectedItem->data(Qt::UserRole+1).toBool();
+    QString actionText = isActive ? "desativar" : "ativar";
+    QString userName = selectedItem->text().section(" [", 0, 0);
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirmar Remoção",
-                                  QString("Tem certeza que deseja remover o %1 '%2'?")
+                                  QString("Tem certeza que deseja alterar o status do %1 '%2'?")
                                       .arg(userRole)
                                       .arg(userName),
                                   QMessageBox::Yes|QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        m_facade->deleteUser(userId);
+        m_facade->toggleUserStatus(userId);
     }
 }
 

@@ -18,8 +18,8 @@ Principal::Principal(QWidget *parent)
 
     connect(m_facade, &facade_call_system::loginSuccessful, this, &Principal::onLoginSuccess);
     connect(m_facade, &facade_call_system::operationFailed, this, &Principal::onLoginFailed);
-    connect(ui->userPassLineEdit, &QLineEdit::returnPressed, this, &Principal::on_loginBtn_clicked);
     connect(ui->userLoginLineEdit, &QLineEdit::returnPressed, this, &Principal::on_loginBtn_clicked);
+    connect(ui->userPassLineEdit, &QLineEdit::returnPressed, this, &Principal::on_loginBtn_clicked);
 
     // Colors
     QColor whiteBk = 0xf9f9f9;

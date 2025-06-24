@@ -39,10 +39,15 @@ void DatabaseManager::createTables() {
                            "nome TEXT NOT NULL, "
                            "email TEXT UNIQUE NOT NULL, "
                            "senha TEXT NOT NULL, "
-                           "tipo TEXT CHECK(tipo IN ('Solicitante', 'Tecnico', 'Admin')) NOT NULL"
+                           "tipo TEXT CHECK(tipo IN ('Solicitante', 'Tecnico', 'Admin')) NOT NULL, "
+                           "ativo INTEGER NOT NULL DEFAULT 1"
                            ");";
+
     if (!query.exec(userTableSql)) {
         qWarning() << "Falha ao criar tabela 'Usuario':" << query.lastError().text();
+        return;
+    } else {
+        qDebug() << "Tabela 'Usuario' verificada/criada com sucesso.";
     }
 
     // Adiciona o administrador para gerenciar usuários toda vez que for compilado o programa

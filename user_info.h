@@ -8,6 +8,7 @@ struct UserInfo {
     QString name;
     QString email;
     QString type;
+    bool isActive;
 };
 
 #endif // USER_INFO_H

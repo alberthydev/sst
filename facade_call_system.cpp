@@ -292,7 +292,7 @@ void facade_call_system::requestUserLists()
     QList<UserInfo> requesters;
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
 
-    QString sql = "SELECT id, nome, email, tipo FROM Usuario WHERE tipo != 'Admin' ORDER BY nome";
+    QString sql = "SELECT id, nome, email, tipo, ativo FROM Usuario WHERE tipo != 'Admin' ORDER BY nome";
 
     if (query.exec(sql)) {
         while (query.next()) {
@@ -301,6 +301,7 @@ void facade_call_system::requestUserLists()
             info.name = query.value("nome").toString();
             info.email = query.value("email").toString();
             info.type = query.value("tipo").toString();
+            info.isActive = query.value("ativo").toBool();
 
             if (info.type == "Tecnico") {
                 technicians.append(info);
@@ -315,26 +316,35 @@ void facade_call_system::requestUserLists()
     }
 }
 
-void facade_call_system::deleteUser(int userId)
+void facade_call_system::toggleUserStatus(int userId)
 {
     if (userId == 1) {
-        emit operationFailed("O usuário Administrador padrão não pode ser removido.");
+        emit operationFailed("O status do usuário Administrador padrão não pode ser alterado.");
         return;
     }
 
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
-    query.prepare("DELETE FROM Usuario WHERE id = :id");
+
+    query.prepare("SELECT ativo FROM Usuario WHERE id = :id");
+    query.bindValue(":id", userId);
+
+    if (!query.exec() || !query.next()) {
+        emit operationFailed("Usuário não encontrado.");
+        return;
+    }
+
+    bool currentlyActive = query.value(0).toBool();
+    int newStatus = currentlyActive ? 0 : 1; // Inverte o status
+    QString statusMessage = currentlyActive ? "desativado" : "ativado";
+
+    query.prepare("UPDATE Usuario SET ativo = :newStatus WHERE id = :id");
+    query.bindValue(":newStatus", newStatus);
     query.bindValue(":id", userId);
 
     if (query.exec()) {
-        if (query.numRowsAffected() > 0) {
-            emit userDeletedSuccessfully("Usuário removido com sucesso.");
-        } else {
-            emit operationFailed("Usuário não encontrado ou já removido.");
-        }
+        emit userDeletedSuccessfully(QString("Usuário %1 com sucesso.").arg(statusMessage));
     } else {
-        qWarning() << "Falha ao remover usuário:" << query.lastError().text();
-        emit operationFailed("Erro ao remover usuário. Verifique se ele não tem chamados associados.");
+        emit operationFailed("Erro ao alterar o status do usuário.");
     }
 }
 
@@ -434,10 +444,17 @@ void facade_call_system::createNewCall(const QString &title, const QString &type
 void facade_call_system::validateLogin(const QString &email, const QString &password)
 {
     QSqlQuery query(DatabaseManager::getInstance().getConnection());
-    query.prepare("SELECT id, nome, senha, tipo FROM Usuario WHERE email = :email");
+    query.prepare("SELECT id, nome, senha, tipo, ativo FROM Usuario WHERE email = :email");
     query.bindValue(":email", email);
 
     if (query.exec() && query.next()) {
+        int isActive = query.value("ativo").toInt();
+        if (isActive == 0) {
+            qWarning() << "Tentativa de login por usuário desativado:" << email;
+            emit operationFailed("Este usuário foi desativado. Entre em contato com o administrador.");
+            return;
+        }
+
         QString storedPassword = query.value("senha").toString();
 
         if (storedPassword == password) {

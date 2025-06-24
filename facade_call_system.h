@@ -30,7 +30,7 @@ public slots:
     void sendChatMessage(int callId, const QString &message);
     void closeCall(int callId);
     void requestUserLists();
-    void deleteUser(int userId);
+    void toggleUserStatus(int userId);
     void requestUserDetails(int userId);
     void saveUser(int userId, const QString &name, const QString &email, const QString &password, const QString &type);
     void createNewCall(const QString &title, const QString &type, const QString &priority, const QString &description);

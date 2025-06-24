@@ -28,6 +28,8 @@ requester::requester(QWidget *parent)
     connect(m_facade, &facade_call_system::readyCallDetails, this, &requester::displayCallDetails);
     connect(m_facade, &facade_call_system::readyCallList, this, &requester::populateCallsTable);
     connect(m_facade, &facade_call_system::chatMessagesReady, this, &requester::displayChatMessages);
+    connect(ui->messageLineEdit, &QLineEdit::returnPressed, this, &requester::on_sendMessageBtn_clicked);
+    connect(ui->titleLineEdit, &QLineEdit::returnPressed, this, &requester::on_sendCallBtn_clicked);
 
     // Colors
     QColor whiteBk = 0xf9f9f9;
