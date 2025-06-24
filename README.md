@@ -1,6 +1,6 @@
 # SST - Sistema de Suporte Técnico
 
-Repositório do sistema de suporte técnico desenvolvido em C++ com Qt.
+Repositório do sistema de suporte técnico desenvolvido em C++ com Qt utilizando padrões de projetos vistos em aula.
 
 ---
 
@@ -14,10 +14,16 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 
 - Tela de login com autenticação.
 - Cadastro e gerenciamento de usuários.
-- Cadastro e gerenciamento de técnicos.
 - Abertura e acompanhamento de chamados técnicos.
-- Chat entre o técnico e o solicitante
-- Interface intuitiva baseada em Qt Designer.
+- Chat entre o técnico e o solicitante.
+- Interface intuitiva.
+
+---
+## Padrões Utilizados
+
+- Singleton
+- Facade
+- State
 
 ---
 
@@ -26,7 +32,6 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 - Linguagem: C++
 - Framework: Qt 6 (Widgets)
 - Banco de Dados: SQLite (arquivo `sst_db.db`)
-- Ferramentas: Qt Creator, CMake para build
 
 ---
 
@@ -34,7 +39,7 @@ O **SST (Sistema de Suporte Técnico)** é uma aplicação desktop desenvolvida 
 
 - Qt 6.x (Qt Widgets)
 - Compilador C++ compatível com C++17 ou superior
-- CMake (para gerar os arquivos de build)
+- qmake (para gerar os arquivos de build)
 - SQLite (embutido no projeto, não é necessário instalar separadamente)
 
 ---
